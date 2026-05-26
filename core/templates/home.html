@@ -1,0 +1,379 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>UniConnect Recife</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            background:#0f172a;
+            color:white;
+        }
+
+        .hero{
+            height:420px;
+
+            background-image:
+            linear-gradient(
+                rgba(76, 29, 149, 0.45),
+                rgba(15, 23, 42, 0.45)
+            ),
+            url("/static/img/recife.png");
+
+            background-size:cover;
+            background-position:center;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            text-align:center;
+            padding:30px;
+        }
+
+        .hero h1{
+            font-size:64px;
+            margin-bottom:15px;
+            text-shadow:0 5px 18px rgba(0,0,0,0.6);
+        }
+
+        .hero p{
+            font-size:22px;
+            color:#f3e8ff;
+            text-shadow:0 3px 12px rgba(0,0,0,0.6);
+        }
+
+        .container{
+            width:90%;
+            max-width:1200px;
+            margin:auto;
+            padding:40px 0;
+        }
+
+        .formulario{
+            background:#1e293b;
+            padding:30px;
+            border-radius:20px;
+            margin-bottom:40px;
+            box-shadow:0 12px 30px rgba(0,0,0,0.35);
+        }
+
+        .formulario h2{
+            margin-bottom:20px;
+            color:#e9d5ff;
+        }
+
+        .grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:15px;
+        }
+
+        input,
+        textarea,
+        select{
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:10px;
+            outline:none;
+        }
+
+        textarea{
+            grid-column:span 2;
+            height:100px;
+            resize:none;
+        }
+
+        button{
+            background:#7c3aed;
+            color:white;
+            border:none;
+            padding:14px;
+            border-radius:10px;
+            cursor:pointer;
+            font-weight:bold;
+            transition:0.3s;
+        }
+
+        button:hover{
+            background:#6d28d9;
+        }
+
+        .btn-full{
+            grid-column:span 2;
+        }
+
+        .titulo-secao{
+            margin-bottom:25px;
+            font-size:30px;
+        }
+
+        .cards{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(330px,1fr));
+            gap:25px;
+        }
+
+        .card{
+            background:white;
+            color:#0f172a;
+            padding:25px;
+            border-radius:20px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .tag{
+            display:inline-block;
+            background:#7c3aed;
+            color:white;
+            padding:6px 14px;
+            border-radius:999px;
+            margin-bottom:15px;
+            font-size:13px;
+            text-transform:uppercase;
+        }
+
+        .card h2{
+            margin-bottom:15px;
+        }
+
+        .info{
+            margin-top:10px;
+            color:#475569;
+        }
+
+        .mini-form{
+            margin-top:20px;
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+        }
+
+        .comentarios{
+            margin-top:20px;
+            background:#f1f5f9;
+            padding:15px;
+            border-radius:12px;
+        }
+
+        .comentarios p{
+            margin-top:8px;
+            color:#334155;
+        }
+
+        @media(max-width:700px){
+
+            .hero h1{
+                font-size:42px;
+            }
+
+            .grid{
+                grid-template-columns:1fr;
+            }
+
+            textarea,
+            .btn-full{
+                grid-column:span 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="hero">
+
+    <div>
+        <h1>UniConnect Recife</h1>
+
+        <p>
+            Central de criação e divulgação de eventos universitários em Recife
+        </p>
+    </div>
+
+</header>
+
+<div class="container">
+
+    <div class="formulario">
+
+        <h2>Criar novo evento universitário</h2>
+
+        <form method="POST" action="{% url 'criar_evento' %}">
+
+            {% csrf_token %}
+
+            <div class="grid">
+
+                <input type="text" name="titulo" placeholder="Título do evento" required>
+
+                <input type="text" name="local" placeholder="Local do evento" required>
+
+                <input type="date" name="data" required>
+
+                <input type="time" name="horario" required>
+
+                <select name="categoria">
+
+                    <option value="palestra">Palestra</option>
+
+                    <option value="workshop">Workshop</option>
+
+                    <option value="cultural">Cultural</option>
+
+                    <option value="esportivo">Esportivo</option>
+
+                    <option value="tecnologia">Tecnologia</option>
+
+                </select>
+
+                <input type="number" name="vagas" placeholder="Quantidade de vagas" required>
+
+                <textarea
+                    name="descricao"
+                    placeholder="Descrição do evento"
+                ></textarea>
+
+                <button class="btn-full" type="submit">
+                    Publicar Evento
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <h2 class="titulo-secao">Próximos eventos</h2>
+
+    <div class="cards">
+
+        {% for evento in eventos %}
+
+        <div class="card">
+
+            <span class="tag">{{ evento.categoria }}</span>
+
+            <h2>{{ evento.titulo }}</h2>
+
+            <p>{{ evento.descricao }}</p>
+
+            <p class="info">
+                <strong>Local:</strong>
+                {{ evento.local }}
+            </p>
+
+            <p class="info">
+                <strong>Data:</strong>
+                {{ evento.data }}
+            </p>
+
+            <p class="info">
+                <strong>Horário:</strong>
+                {{ evento.horario }}
+            </p>
+
+            <p class="info">
+                <strong>Vagas:</strong>
+                {{ evento.vagas }}
+            </p>
+
+            <form
+                method="POST"
+                action="{% url 'confirmar_presenca' evento.id %}"
+                class="mini-form"
+            >
+
+                {% csrf_token %}
+
+                <input
+                    type="text"
+                    name="nome_aluno"
+                    placeholder="Seu nome"
+                    required
+                >
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Seu e-mail"
+                    required
+                >
+
+                <button type="submit">
+                    Confirmar Presença
+                </button>
+
+            </form>
+
+            <form
+                method="POST"
+                action="{% url 'comentar' evento.id %}"
+                class="mini-form"
+            >
+
+                {% csrf_token %}
+
+                <input
+                    type="text"
+                    name="nome"
+                    placeholder="Seu nome"
+                    required
+                >
+
+                <input
+                    type="text"
+                    name="texto"
+                    placeholder="Comentário"
+                    required
+                >
+
+                <button type="submit">
+                    Comentar
+                </button>
+
+            </form>
+
+            <div class="comentarios">
+
+                <strong>Comentários:</strong>
+
+                {% for comentario in evento.comentario_set.all %}
+
+                    <p>
+                        <strong>{{ comentario.nome }}:</strong>
+                        {{ comentario.texto }}
+                    </p>
+
+                {% empty %}
+
+                    <p>Nenhum comentário ainda.</p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+            <p>Nenhum evento cadastrado ainda.</p>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+</body>
+</html>
